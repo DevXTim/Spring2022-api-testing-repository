@@ -1,93 +1,107 @@
 package rest;
 
+import com.github.javafaker.Faker;
+import com.google.gson.Gson;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import pojos.User;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Locale;
 
-public class CRUDTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CRUDTest extends BaseClass {
+
+    // CRUD -> Create, Read, Update, Delete
+
+    // Assumptions -> checking if steps that we do are correct before we do assertion
+
+    //soft and hard assert
+    // assertAll
+
+    // Goal: test if users method run() gives 10km/h
+    // When create a user, you assume it was created and it has run()
+    // Assertion of run() method -> final testing
+
+    // Assertions -> method we use to verify whether the condition is true.
+    // Validation of expected with actual result using different statement
 
 
-    // Arrange
-    // Set up baseUrl to RestAssured
-    private static final String apiHost = "https://gorest.co.in/public";
-    private static final String apiVersion = "/v2";
-
-//    private static final String token = "0958864dd3f5b9cac67e0564b03444d7a9a1033897f724f1eff926f4f96ccdb0";
-    private static final String token = "123";
-
-    // Arrange
-    // Act
-    // Assert
-
-
+    // given when then (arrange act assert)
     @Test
-    public void givenValidResponse_checkStatusCode() {
-        //Setting up baseUrl as in postman
-        RestAssured.baseURI = apiHost + apiVersion;
+    public void createUser_givenValidResponse_createdStatusCode() {
+        User user = new User();
+        user.setName(faker.name().fullName());
+        user.setEmail(user.getName().toLowerCase(Locale.ROOT).trim().replace(" ", "") + "@gmail.com");
+        user.setGender("male");
+        user.setStatus("active");
 
-        // RestAssured also uses triple A
-        // given when then (arrange, act, assert)
-        Response getResponse = RestAssured
-                // Arrange
-                .given()
-                // contentType is about type of data you send to server
-                .contentType(ContentType.JSON)
-                // Headers include authorization and accept data in key value type
-                .headers("Authorization", token)
-                // this is about what type of data YOU receive as a client
-                .accept(ContentType.JSON)
-                // Act -> send is happening
-                .when()
-                .get("/users");
+        // to serialize from pojo(class) format to json format
+        System.out.println(gson.toJson(user));
 
-        System.out.println(getResponse.asString());
-
-        assertEquals(201, getResponse.getStatusCode());
-
-    }
-
-    @Test
-    public void givenInvalidToken_checkStatusCode() {
-        //Setting up baseUrl as in postman
-        // Use hooks
-        RestAssured.baseURI = apiHost + apiVersion;
-
-        String postBody = "{\n" +
-                "    \"name\": \"Saturday august\",\n" +
-                "    \"email\": \"devxadmin1351351351@gmail.com\",\n" +
-                "    \"gender\": \"female\",\n" +
-                "    \"status\": \"active\"\n" +
-                "}";
-
-        // RestAssured also uses triple A
-        // given when then (arrange, act, assert)
         Response postResponse = RestAssured
-                // Arrange
                 .given()
-                // contentType is about type of data you send to server
                 .contentType(ContentType.JSON)
-                // Headers include authorization and accept data in key value type
-                .headers("Authorization", token)
-                // this is about what type of data YOU receive as a client
+                .headers("Authorization","Bearer " + token)
                 .accept(ContentType.JSON)
-                .body(postBody)
-                // Act -> send is happening
+                .body(gson.toJson(user))
                 .when()
                 .post("/users");
 
         System.out.println(postResponse.asString());
 
-        assertEquals(401, postResponse.getStatusCode());
+        assertAll(
+                () -> assertEquals(201, postResponse.getStatusCode()),
+                () -> assertTrue(postResponse.asString().contains(user.getName())),
+                () -> assertTrue(postResponse.asString().contains(user.getEmail()))
+        );
+    }
 
+    // Read -> create a user, then we have to retrieve the created user using id from response
 
-        // De/Serialization -> converting one data source to another type
-        // JSON to -> map, object (POJO), List
-        // Object, List -> JSON
+    @Test
+    public void getUser_givenValidResponse_okStatusCode() {
+        User user = new User();
+        user.setName(faker.name().fullName());
+        user.setEmail(user.getName().toLowerCase(Locale.ROOT).trim().replace(" ", "") + "@gmail.com");
+        user.setGender("male");
+        user.setStatus("active");
 
-        // Cucumber ->
+        // to serialize from pojo(class) format to json format
+        System.out.println(gson.toJson(user));
+
+        Response postResponse = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .headers("Authorization","Bearer " + token)
+                .accept(ContentType.JSON)
+                .body(gson.toJson(user))
+                .when()
+                .post("/users");
+
+        // Given and When are correct
+        Assumptions.assumeTrue(201 == postResponse.getStatusCode());
+
+        System.out.println(postResponse.asString());
+
+        User userPost = gson.fromJson(postResponse.asString(), User.class);
+
+        Response getResponse = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .headers("Authorization","Bearer " + token)
+                .accept(ContentType.JSON)
+                .when()
+                .pathParam("userId", userPost.getId())
+                .get("/users/{userId}");
+
+        assertAll(
+                () -> assertEquals(200, getResponse.getStatusCode()),
+                () -> assertTrue(getResponse.asString().contains(user.getName())),
+                () -> assertTrue(getResponse.asString().contains(user.getEmail()))
+        );
     }
 }
