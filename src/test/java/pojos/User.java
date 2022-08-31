@@ -1,16 +1,27 @@
 package pojos;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User {
 
+    // To ignore ID field at the moment of serialization and
+    // include at the moment of deserialization
+//        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String id;
+    // On the moment of conversion between POJO and JSON (vice versa)
+    // it replaces name and name where needed.
+    // On serialization, we need to have field 'name' in JSON
+    // So jackson renames name as name in JSON file.
+    // On deserialization,
     private String name;
     private String email;
     private String gender;
     private String status;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String name, String email, String gender, String status) {
         this.name = name;
@@ -23,11 +34,11 @@ public class User {
         return id;
     }
 
-    public String getName() {
+    public String getname() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setname(String name) {
         this.name = name;
     }
 
@@ -57,11 +68,13 @@ public class User {
 
     @Override
     public String toString() {
-            return new ToStringBuilder(this)
-                .append("name", getName())
-                .append("email", getEmail())
-                .append("gender", getGender())
-                .append("status", getStatus())
-                .toString();
+        final StringBuilder sb = new StringBuilder("User{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", email='").append(email).append('\'');
+        sb.append(", gender='").append(gender).append('\'');
+        sb.append(", status='").append(status).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }
