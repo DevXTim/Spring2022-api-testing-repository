@@ -6,7 +6,7 @@ import io.restassured.response.Response;
 
 public class RestClient {
 
-    public Response createUser(String bearerToken, String jsonBody) {
+    public static Response createUser(String bearerToken, String jsonBody) {
         return RestAssured
                 .given()
                 .contentType(ContentType.JSON)
@@ -17,7 +17,7 @@ public class RestClient {
                 .post("/users");
     }
 
-    public Response getUser(String bearerToken, String userId) {
+    public static Response getUser(String bearerToken, String userId) {
         return RestAssured
                 .given()
                 .contentType(ContentType.JSON)
@@ -26,5 +26,28 @@ public class RestClient {
                 .when()
                 .pathParam("userId", userId)
                 .get("/users/{userId}");
+    }
+
+    public static Response putUser(String bearerToken, String userId, String jsonBody) {
+        return RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .headers("Authorization", "Bearer " + bearerToken)
+                .accept(ContentType.JSON)
+                .body(jsonBody)
+                .when()
+                .pathParam("userId", userId)
+                .put("/users/{userId}");
+    }
+
+    public static Response deleteUser(String bearerToken, String userId) {
+        return RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .headers("Authorization","Bearer " + bearerToken)
+                .accept(ContentType.JSON)
+                .when()
+                .pathParam("userId", userId)
+                .delete("/users/{userId}");
     }
 }

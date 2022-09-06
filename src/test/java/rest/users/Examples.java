@@ -1,21 +1,20 @@
-package rest;
+package rest.users;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import pojos.User;
+import rest.BaseClass;
 import utils.RestClient;
 
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CRUDTest extends BaseClass {
+public class Examples extends BaseClass {
 
     // CRUD -> Create, Read, Update, Delete
 
@@ -39,7 +38,7 @@ public class CRUDTest extends BaseClass {
     @Test
     public void createUser_givenValidResponse_createdStatusCode() {
         User user = new User();
-        user.setname(faker.name().fullName());
+        user.setName(faker.name().fullName());
         user.setEmail(user.getname().toLowerCase(Locale.ROOT).trim().replace(" ", "") + "@gmail.com");
         user.setGender("male");
         user.setStatus("active");
@@ -64,7 +63,7 @@ public class CRUDTest extends BaseClass {
     public void getUser_givenValidResponse_okStatusCode() {
         // Arrange
         User user = new User();
-        user.setname(faker.name().fullName());
+        user.setName(faker.name().fullName());
         user.setEmail(user.getname().toLowerCase(Locale.ROOT).trim().replace(" ", "") + "@gmail.com");
         user.setGender("male");
         user.setStatus("active");
@@ -96,7 +95,7 @@ public class CRUDTest extends BaseClass {
     public void serializationWithGson_DeserializationWithRestAssuredAndJsonPath() {
         // Arrange
         User user = new User();
-        user.setname(faker.name().fullName());
+        user.setName(faker.name().fullName());
         user.setEmail(user.getname().toLowerCase(Locale.ROOT).trim().replace(" ", "") + "@gmail.com");
         user.setGender("male");
         user.setStatus("active");
@@ -140,7 +139,7 @@ public class CRUDTest extends BaseClass {
     public void serializationAndDeserializationUsingJackson() throws JsonProcessingException {
         // Arrange
         User user = new User();
-        user.setname(faker.name().fullName());
+        user.setName(faker.name().fullName());
         user.setEmail(user.getname().toLowerCase(Locale.ROOT).trim().replace(" ", "") + "@gmail.com");
         user.setGender("male");
         user.setStatus("active");
