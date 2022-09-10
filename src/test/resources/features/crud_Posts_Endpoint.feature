@@ -4,9 +4,8 @@ Feature: CRUD of /posts endpoint
     Given user creates a user
 
   Scenario Outline: Create a post in a /posts endpoint
-    Given user gets an id of existing user
-#    When user creates a post with title <title> and body <body>
-#    Then check if post is created with title <title> and body <body>
+    When user creates a post with title "<title>" and body "<body>"
+    Then check if post is created with title "<title>" and body "<body>"
 
     Examples:
       | title                            | body                                                                                                                           |

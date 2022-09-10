@@ -8,7 +8,6 @@ public class User {
     // To ignore ID field at the moment of serialization and
     // include at the moment of deserialization
 //        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String id;
     // On the moment of conversion between POJO and JSON (vice versa)
     // it replaces name and name where needed.

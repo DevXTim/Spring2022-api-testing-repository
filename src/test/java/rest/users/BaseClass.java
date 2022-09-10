@@ -1,9 +1,9 @@
-package rest;
+package rest.users;
 
 import com.github.javafaker.Faker;
 import com.google.gson.Gson;
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import utils.ConfigReader;
 
 public abstract class BaseClass {
@@ -17,8 +17,8 @@ public abstract class BaseClass {
     public static final Gson gson = new Gson();
 
 
-    @BeforeEach
-    public void baseUrlSetup() {
+    @Before
+    public void baseUrlSetupBDD() {
         RestAssured.baseURI = apiHost + apiVersion;
     }
 }

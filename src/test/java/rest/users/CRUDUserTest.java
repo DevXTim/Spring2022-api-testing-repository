@@ -1,10 +1,12 @@
 package rest.users;
 
+import com.github.javafaker.Faker;
+import com.google.gson.Gson;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import pojos.User;
-import rest.BaseClass;
+import utils.ConfigReader;
 import utils.RestClient;
 
 import java.util.Locale;
@@ -12,7 +14,9 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CRUDUserTest extends BaseClass {
+public class CRUDUserTest extends BaseClass{
+    
+    RestClient restClient = new RestClient();
     
     // CRUD - create, read
 
@@ -26,7 +30,7 @@ public class CRUDUserTest extends BaseClass {
 
         System.out.println(gson.toJson(user));
 
-        Response postResponse = RestClient.createUser(token, gson.toJson(user));
+        Response postResponse = restClient.createUser(token, gson.toJson(user));
 
         System.out.println(postResponse.asString());
 
@@ -45,14 +49,14 @@ public class CRUDUserTest extends BaseClass {
 
         System.out.println(gson.toJson(user));
 
-        Response postResponse = RestClient.createUser(token, gson.toJson(user));
+        Response postResponse = restClient.createUser(token, gson.toJson(user));
         Assumptions.assumeTrue(201 == postResponse.getStatusCode());
 
         System.out.println(postResponse.asString());
 
         User userPost = gson.fromJson(postResponse.asString(), User.class);
 
-        Response getResponse = RestClient.getUser(token, userPost.getId());
+        Response getResponse = restClient.getUser(token, userPost.getId());
 
         assertAll(
                 () -> assertEquals(200, getResponse.getStatusCode()),
@@ -69,7 +73,7 @@ public class CRUDUserTest extends BaseClass {
 
         System.out.println(gson.toJson(user));
 
-        Response postResponse = RestClient.createUser(token, gson.toJson(user));
+        Response postResponse = restClient.createUser(token, gson.toJson(user));
         Assumptions.assumeTrue(201 == postResponse.getStatusCode());
 
         System.out.println(postResponse.asString());
@@ -79,9 +83,9 @@ public class CRUDUserTest extends BaseClass {
         user.setStatus("inactive");
         user.setEmail(user.getname().toLowerCase(Locale.ROOT).trim().replace(" ", "") + "@yahoo.com");
 
-        Response putResponse = RestClient.putUser(token, userPost.getId(), gson.toJson(user));
+        Response putResponse = restClient.putUser(token, userPost.getId(), gson.toJson(user));
 
-        Response getResponse = RestClient.getUser(token, userPost.getId());
+        Response getResponse = restClient.getUser(token, userPost.getId());
 
         System.out.println(getResponse.asString());
 
@@ -103,15 +107,15 @@ public class CRUDUserTest extends BaseClass {
 
         System.out.println(gson.toJson(user));
 
-        Response postResponse = RestClient.createUser(token, gson.toJson(user));
+        Response postResponse = restClient.createUser(token, gson.toJson(user));
         Assumptions.assumeTrue(201 == postResponse.getStatusCode());
 
         System.out.println(postResponse.asString());
 
         User userPost = gson.fromJson(postResponse.asString(), User.class);
 
-        Response deleteResponse = RestClient.deleteUser(token, userPost.getId());
-        Response getResponse = RestClient.getUser(token, userPost.getId());
+        Response deleteResponse = restClient.deleteUser(token, userPost.getId());
+        Response getResponse = restClient.getUser(token, userPost.getId());
 
         assertAll(
                 () -> assertEquals(204, deleteResponse.getStatusCode()),
@@ -119,5 +123,4 @@ public class CRUDUserTest extends BaseClass {
                 () -> assertEquals("Resource not found", getResponse.jsonPath().getString("message"))
         );
     }
-
 }

@@ -7,7 +7,6 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import pojos.User;
-import rest.BaseClass;
 import utils.RestClient;
 
 import java.util.Locale;
